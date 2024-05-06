@@ -23,9 +23,11 @@ The tool can be used in short as follows:
        **Only wrapper class**: When you select this option the generator will only generate a wrapper class, for those that do not want to generate 3 wrapper objects
    3.3 Here you have to specify the repository object names that shall be generated. Depending on the option you have chosen you have to specify the names of three objects or just for one class.
 
-4. Start the report and check the generated objects in the target package.
+4. Start the report and check the output.  
 
    <img src="images/030_result_report.png" alt="Check output of report" width="70%">    
+
+5. Check the generated objects in the target package.
 
    <img src="images/040_generated_objects.png" alt="Check generated objects" width="70%">   
 
