@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+ <asx:values>
+  <DATA>
+   <NAME>TEST_AF_TIER2_RFC_PROXY (report and class)</NAME>
+   <MASTER_LANGUAGE>E</MASTER_LANGUAGE>
+   <STARTING_FOLDER>/src/</STARTING_FOLDER>
+   <FOLDER_LOGIC>PREFIX</FOLDER_LOGIC>
+  </DATA>
+ </asx:values>
+</asx:abap>
