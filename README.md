@@ -17,6 +17,10 @@ It basically uses the same API used by transaction ACO_PROXY. It takes the code 
   - [SAP Note 3457580 - SAP ACO - Duplicate Types for Table Parameters](https://me.sap.com/notes/3457580)
 
 
+## Future Outlook
+In future the idea is to provide such a generator as well in the ABAP development tools for Eclipse.
+This will be possible with the next S/4HANA release and the ADT generator framework.    
+
 ## How to section
 
 The tool can be used in short as follows:
