@@ -10,12 +10,25 @@ The tool can be used in short as follows:
 
 1. Start report **zr_gen_rfc_tier2_proxy** using transaction **SE38**.
 2. Select one or more function modules that shall be wrapped for the use in ABAP Cloud.
+
+   <img src="images/010_select_function_modules.png" alt="Select function modules" width="100%">   
+
 3. Select remaining parameters
+
+   <img src="images/020_specify_options.png" alt="Select remaining parameters" width="100%">   
+
    3.1 **Target Package** : Here you have to select the package in which the wrapper objects shall be generated
+    
    3.2 **Intf., class and fact.class**: When you select this option the generator will generate a wrapper class, an interface and a factory class (this is recommended)
        **Only wrapper class**: When you select this option the generator will only generate a wrapper class, for those that do not want to generate 3 wrapper objects
    3.3 Here you have to specify the repository object names that shall be generated. Depending on the option you have chosen you have to specify the names of three objects or just for one class.
+
 4. Start the report and check the generated objects in the target package.
+
+   <img src="images/030_result_report.png" alt="Check output of report" width="100%">    
+
+   <img src="images/040_generated_objects.png" alt="Check generated objects" width="100%">   
+
 
 ### Background
 
