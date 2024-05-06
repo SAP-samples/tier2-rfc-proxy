@@ -1,3 +1,5 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/tier2-rfc-proxy)](https://api.reuse.software/info/github.com/SAP-samples/tier2-rfc-proxy)
+
 # Tier2 RFC proxy generator
 
 This repository contains a helper class and a report that helps you to generate a custom wrapper for the ABAP Cloud enablement of an non-released RFC based SAP API.  
