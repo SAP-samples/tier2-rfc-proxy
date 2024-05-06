@@ -137,14 +137,83 @@ ENDCLASS.
 
 CLASS zcl_wrap_test_4711 IMPLEMENTATION.
 
+...
 
-  METHOD zif_wrap_test_4711~bapi_pr_change.
+  METHOD zif_wrap_test_4711~bapi_pr_create.
     DATA: _rfc_message_ TYPE aco_proxy_msg_type.
-    CALL FUNCTION 'BAPI_PR_CHANGE' DESTINATION space
+    CALL FUNCTION 'BAPI_PR_CREATE' DESTINATION space
       EXPORTING
-        number                 = number
         prheader               = prheader
         prheaderx              = prheaderx
+        testrun                = testrun
+      IMPORTING
+        number                 = number
+        prheaderexp            = prheaderexp
+      TABLES
+        allversions            = allversions
+        extensionin            = extensionin
+        extensionout           = extensionout
+        praccount              = praccount
+        praccountproitsegment  = praccountproitsegment
+        praccountx             = praccountx
+        praddrdelivery         = praddrdelivery
+        prcomponents           = prcomponents
+        prcomponentsx          = prcomponentsx
+        prheadertext           = prheadertext
+        pritem                 = pritem
+        pritemexp              = pritemexp
+        pritemsource           = pritemsource
+        pritemtext             = pritemtext
+        pritemx                = pritemx
+        prversion              = prversion
+        prversionx             = prversionx
+        return                 = return
+        serialnumber           = serialnumber
+        serialnumberx          = serialnumberx
+        serviceaccount         = serviceaccount
+        serviceaccountx        = serviceaccountx
+        servicecontractlimits  = servicecontractlimits
+        servicecontractlimitsx = servicecontractlimitsx
+        servicelimit           = servicelimit
+        servicelimitx          = servicelimitx
+        servicelines           = servicelines
+        servicelinesx          = servicelinesx
+        servicelongtexts       = servicelongtexts
+        serviceoutline         = serviceoutline
+        serviceoutlinex        = serviceoutlinex
+      EXCEPTIONS
+        communication_failure  = 1 MESSAGE _rfc_message_
+        system_failure         = 2 MESSAGE _rfc_message_
+        OTHERS                 = 3.
+    IF sy-subrc NE 0.
+      DATA __sysubrc TYPE sy-subrc.
+      DATA __textid TYPE aco_proxy_textid_type.
+      __sysubrc = sy-subrc.
+      __textid-msgid = sy-msgid.
+      __textid-msgno = sy-msgno.
+      __textid-attr1 = sy-msgv1.
+      __textid-attr2 = sy-msgv2.
+      __textid-attr3 = sy-msgv3.
+      __textid-attr4 = sy-msgv4.
+      CASE __sysubrc.
+        WHEN 1 .
+          RAISE EXCEPTION TYPE cx_aco_communication_failure
+            EXPORTING
+              rfc_msg = _rfc_message_.
+        WHEN 2 .
+          RAISE EXCEPTION TYPE cx_aco_system_failure
+            EXPORTING
+              rfc_msg = _rfc_message_.
+        WHEN 3 .
+          RAISE EXCEPTION TYPE cx_aco_application_exception
+            EXPORTING
+              exception_id = 'OTHERS'
+              textid       = __textid.
+      ENDCASE.
+    ENDIF.
+
+  ENDMETHOD.
+ENDCLASS.
 
 ```
 
