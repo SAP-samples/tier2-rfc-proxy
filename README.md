@@ -11,11 +11,11 @@ The tool can be used in short as follows:
 1. Start report **zr_gen_rfc_tier2_proxy** using transaction **SE38**.
 2. Select one or more function modules that shall be wrapped for the use in ABAP Cloud.
 
-   <img src="images/010_select_function_modules.png" alt="Select function modules" width="100%">   
+   <img src="images/010_select_function_modules.png" alt="Select function modules" width="70%">   
 
 3. Select remaining parameters
 
-   <img src="images/020_specify_options.png" alt="Select remaining parameters" width="100%">   
+   <img src="images/020_specify_options.png" alt="Select remaining parameters" width="70%">   
 
    3.1 **Target Package** : Here you have to select the package in which the wrapper objects shall be generated
     
@@ -25,9 +25,9 @@ The tool can be used in short as follows:
 
 4. Start the report and check the generated objects in the target package.
 
-   <img src="images/030_result_report.png" alt="Check output of report" width="100%">    
+   <img src="images/030_result_report.png" alt="Check output of report" width="70%">    
 
-   <img src="images/040_generated_objects.png" alt="Check generated objects" width="100%">   
+   <img src="images/040_generated_objects.png" alt="Check generated objects" width="70%">   
 
 
 ### Background
