@@ -21,6 +21,12 @@ The tool can be used in short as follows:
 
 This report uses under the hood the API's that are used by transaction ACO_PROXY.
 
+## Further information
+
+- [ABAP Cloud - How to mitigate missing released SAP APIs in SAP S/4HANA Cloud, private edition and SAP S/4HANA – The new ABAP Cloud API enablement guide](https://community.sap.com/t5/enterprise-resource-planning-blogs-by-sap/abap-cloud-how-to-mitigate-missing-released-sap-apis-in-sap-s-4hana-cloud/ba-p/13561479)
+
+- [ABAP Cloud – Mitigate missing released SAP APIs in the 3-tier extensibility model: a tutorial how to wrap a BAPI and integrate it into a custom RAP business object](https://community.sap.com/t5/enterprise-resource-planning-blogs-by-sap/abap-cloud-mitigate-missing-released-sap-apis-in-the-3-tier-extensibility/ba-p/13580268)
+
 ## Requirements
 
 - You have to have a system based on SAP S/4HANA 2022 on premise.
