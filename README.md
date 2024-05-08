@@ -51,6 +51,18 @@ The tool can be used in short as follows:
 
    <img src="images/040_generated_objects.png" alt="Check generated objects" width="70%">   
 
+7. What is now left to do is that the developer has to implement the public methods with a call of the respective private methods.
+
+   Here it is possible to change the signature of the public method e.g. by reducing the number of parameters that are exposed.
+
+   By default the public and private methods use the same signature.
+
+   ```ABAP
+    METHOD zif_wrap_test_003~bapi_pr_create.
+    "add call to private method bapi_pr_create
+    "e.g. me->bapi_pr_create( ... )
+    ENDMETHOD.
+   ```
 
 ## Generated code
 
@@ -270,6 +282,8 @@ In principle you can achieve the same result by running the transaction ACO_PROX
 - change the __dest__ statements with _space_ statements.
 - create a factory class that instantiates the wrapper class
 - C1 release the interface and the factory class
+
+
 
 ## Further information
 
