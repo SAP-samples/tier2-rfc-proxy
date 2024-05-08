@@ -808,7 +808,7 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
         source_code_line_impl =  source_code_line_impl &&  '.'.
 *        APPEND |.| TO r_methods_implementation_code.
         APPEND source_code_line_impl TO r_methods_implementation_code.
-        APPEND |  "add call to private { source_code_line }| TO r_methods_implementation_code.
+        APPEND |  "add call to private method { method_name }| TO r_methods_implementation_code.
         append |  "e.g. me->{ method_name }( ... ) | TO r_methods_implementation_code.
         APPEND |ENDMETHOD.|     TO r_methods_implementation_code.
       ENDIF.
