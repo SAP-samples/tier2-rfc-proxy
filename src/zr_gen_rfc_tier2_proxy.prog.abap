@@ -45,6 +45,7 @@ TRY.
       i_wrapper_interface_name       = wrapintf
       i_wrapper_factory_class_name   = wrapfact
       i_function_modules             = function_modules
+      i_overwrite_objects            = patchobj
     ).
 
   CATCH cx_abap_invalid_value INTO DATA(invalid_parameter).
