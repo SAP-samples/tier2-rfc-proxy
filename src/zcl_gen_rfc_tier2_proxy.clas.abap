@@ -18,6 +18,13 @@ CLASS zcl_gen_rfc_tier2_proxy DEFINITION
 
     DATA transport_request TYPE sxco_transport READ-ONLY.
 
+    DATA wrapper_interface_code TYPE rswsourcet READ-ONLY.
+    DATA wrapper_class_code TYPE rswsourcet READ-ONLY.
+    DATA wrapper_factory_class_code TYPE rswsourcet READ-ONLY.
+
+    DATA methods_code_definition TYPE rswsourcet READ-ONLY .
+    DATA methods_code_implementation TYPE rswsourcet READ-ONLY.
+
     INTERFACES if_oo_adt_classrun .
 
 
@@ -30,11 +37,12 @@ CLASS zcl_gen_rfc_tier2_proxy DEFINITION
                 i_wrapper_interface_name       TYPE sxco_class_name  OPTIONAL
                 i_wrapper_factory_class_name   TYPE sxco_class_name  OPTIONAL
                 i_function_modules             TYPE cl_aco_metadata_provider=>t_functions
+                i_overwrite_objects            TYPE abap_bool DEFAULT abap_true
       RAISING   cx_abap_invalid_value.
 
 
     METHODS read_aco_proxy_cls_src_code
-      IMPORTING remove_class_method_statements  TYPE abap_bool DEFAULT abap_true
+*      IMPORTING remove_class_method_statements  TYPE abap_bool DEFAULT abap_true
       RETURNING VALUE(aco_proxy_class_src_code) TYPE rswsourcet.
 
     METHODS get_wrapper_class_code
@@ -45,10 +53,17 @@ CLASS zcl_gen_rfc_tier2_proxy DEFINITION
       IMPORTING I_aco_proxy_class_src_code      TYPE rswsourcet
       RETURNING VALUE(r_wrapper_interface_code) TYPE rswsourcet.
 
+    METHODS get_private_methods_code
+      IMPORTING I_aco_proxy_class_src_code    TYPE rswsourcet
+      EXPORTING
+                r_methods_definition_code     TYPE rswsourcet
+                r_methods_implementation_code TYPE rswsourcet.
+
     METHODS get_wrapper_factory_class_code
       RETURNING VALUE(r_wrapper__factory_class_code) TYPE rswsourcet..
 
     METHODS generate_wrapper_objects
+      IMPORTING i_demo_mode             TYPE abap_bool DEFAULT abap_false
       RETURNING VALUE(r_exception_text) TYPE string.
 
     METHODS generate_wrapper_interface.
@@ -93,6 +108,8 @@ CLASS zcl_gen_rfc_tier2_proxy DEFINITION
   PRIVATE SECTION.
 
     DATA generate_intf_and_fact_class TYPE abap_bool.
+    DATA overwrite_objects TYPE abap_bool.
+
 
 ENDCLASS.
 
@@ -118,17 +135,21 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
     generate_intf_and_fact_class = i_generate_intf_and_fact_class.
 
-    IF i_generate_intf_and_fact_class = abap_true.
-      IF xco_abap_repository=>object->clas->for(  i_wrapper_class_name  )->exists( ).
-        RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Class { i_wrapper_class_name } does already exist |.
-      ELSEIF xco_abap_repository=>object->intf->for(  i_wrapper_interface_name  )->exists( ).
-        RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Interface { i_wrapper_interface_name } does already exist |.
-      ELSEIF xco_abap_repository=>object->clas->for(  i_wrapper_factory_class_name  )->exists( ).
-        RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Class { i_wrapper_factory_class_name } does already exist |.
-      ENDIF.
-    ELSE.
-      IF xco_abap_repository=>object->clas->for(  i_wrapper_class_name  )->exists( ).
-        RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Class { i_wrapper_class_name } does already exist |.
+    overwrite_objects = i_overwrite_objects.
+
+    IF i_overwrite_objects = abap_false.
+      IF i_generate_intf_and_fact_class = abap_true.
+        IF xco_abap_repository=>object->clas->for(  i_wrapper_class_name  )->exists( ).
+          RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Class { i_wrapper_class_name } does already exist |.
+        ELSEIF xco_abap_repository=>object->intf->for(  i_wrapper_interface_name  )->exists( ).
+          RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Interface { i_wrapper_interface_name } does already exist |.
+        ELSEIF xco_abap_repository=>object->clas->for(  i_wrapper_factory_class_name  )->exists( ).
+          RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Class { i_wrapper_factory_class_name } does already exist |.
+        ENDIF.
+      ELSE.
+        IF xco_abap_repository=>object->clas->for(  i_wrapper_class_name  )->exists( ).
+          RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Class { i_wrapper_class_name } does already exist |.
+        ENDIF.
       ENDIF.
     ENDIF.
 
@@ -168,8 +189,8 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ENDTRY.
 
     read_aco_proxy_cls_src_code(
-      EXPORTING
-        remove_class_method_statements = abap_true
+*      EXPORTING
+*        remove_class_method_statements = abap_true
       RECEIVING
         aco_proxy_class_src_code       = DATA(aco_proxy_class_code)
     ).
@@ -179,12 +200,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    get_wrapper_class_code(
-      EXPORTING
-        i_aco_proxy_class_src_code = aco_proxy_class_code
-      RECEIVING
-        r_wrapper_class_code       = DATA(wrapper_class_code)
-    ).
 
     IF generate_intf_and_fact_class = abap_true.
 
@@ -192,59 +207,86 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
         EXPORTING
           i_aco_proxy_class_src_code = aco_proxy_class_code
         RECEIVING
-          r_wrapper_interface_code   = DATA(wrapper_interface_code)
+          r_wrapper_interface_code   = wrapper_interface_code
+      ).
+
+      get_private_methods_code(
+        EXPORTING
+          i_aco_proxy_class_src_code = aco_proxy_class_code
+        IMPORTING
+          r_methods_definition_code  = methods_code_definition
+          r_methods_implementation_code = methods_code_implementation
       ).
 
       get_wrapper_factory_class_code(
         RECEIVING
-          r_wrapper__factory_class_code = DATA(wrapper_factory_class_code)
+          r_wrapper__factory_class_code = wrapper_factory_class_code
       ).
-
-      generate_wrapper_interface( ).
-
-      generate_factory_class( ).
 
     ENDIF.
 
-    TRY.
+    get_wrapper_class_code(
+      EXPORTING
+        i_aco_proxy_class_src_code = aco_proxy_class_code
+      RECEIVING
+        r_wrapper_class_code       = wrapper_class_code
+    ).
 
-        IF generate_intf_and_fact_class = abap_true.
+    IF i_demo_mode = abap_false.
 
-          update_wrapper_objects_code(
-            i_object_type = 'INTF'
-            i_object_name = CONV #( wrapper_interface_name )
-            i_source_code = wrapper_interface_code
-          ).
+      TRY.
 
-        ENDIF.
+          IF generate_intf_and_fact_class = abap_true.
 
-        update_wrapper_objects_code(
-          i_object_type = 'CLAS'
-          i_object_name = CONV #( wrapper_class_name )
-          i_source_code = wrapper_class_code
-        ).
+            IF xco_abap_repository=>object->intf->for(  wrapper_interface_name  )->exists( ) = abap_False.
+              generate_wrapper_interface( ).
+            ELSE.
+              ASSERT overwrite_objects = abap_true.
+            ENDIF.
 
-        IF generate_intf_and_fact_class = abap_true.
+            IF xco_abap_repository=>object->clas->for(  wrapper_factory_class_name  )->exists( ) = abap_False.
+              generate_factory_class( ).
+            ELSE.
+              ASSERT overwrite_objects = abap_true.
+            ENDIF.
+
+            update_wrapper_objects_code(
+              i_object_type = 'INTF'
+              i_object_name = CONV #( wrapper_interface_name )
+              i_source_code = wrapper_interface_code
+            ).
+
+          ENDIF.
 
           update_wrapper_objects_code(
             i_object_type = 'CLAS'
-            i_object_name = CONV #( wrapper_factory_class_name )
-            i_source_code = wrapper_factory_class_code
+            i_object_name = CONV #( wrapper_class_name )
+            i_source_code = wrapper_class_code
           ).
 
-        ENDIF.
+          IF generate_intf_and_fact_class = abap_true.
 
-      CATCH cx_oo_class_scan_error  INTO DATA(update_wrapper_code_exc).
-        r_exception_text = |cl_oo_factory error: { update_wrapper_code_exc->get_text(  ) }|.
-        RETURN.
-    ENDTRY.
+            update_wrapper_objects_code(
+              i_object_type = 'CLAS'
+              i_object_name = CONV #( wrapper_factory_class_name )
+              i_source_code = wrapper_factory_class_code
+            ).
 
-    TRY.
-        release_class_and_interface(  ).
-      CATCH  cx_abap_api_state   INTO DATA(api_state_exception).
-        r_exception_text = |api_state error: { api_state_exception->get_text(  ) }|.
-        RETURN.
-    ENDTRY.
+          ENDIF.
+
+        CATCH cx_oo_class_scan_error  INTO DATA(update_wrapper_code_exc).
+          r_exception_text = |cl_oo_factory error: { update_wrapper_code_exc->get_text(  ) }|.
+          RETURN.
+      ENDTRY.
+
+      TRY.
+          release_class_and_interface(  ).
+        CATCH  cx_abap_api_state   INTO DATA(api_state_exception).
+          r_exception_text = |api_state error: { api_state_exception->get_text(  ) }|.
+          RETURN.
+      ENDTRY.
+
+    ENDIF.
 
   ENDMETHOD.
 
@@ -374,6 +416,7 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
       DATA(result_last_statement)  = find( val = source_code_line sub  = |PROTECTED SECTION.| case = abap_false ).
       DATA(result_first_statement) = find( val = source_code_line sub  = |INTERFACES if_aco_proxy| case = abap_false ).
       DATA(result_class_methods)   = find( val = source_code_line sub  = |CLASS-METHODS| case = abap_false ).
+      DATA(result_if_aco_proxy)   = find( val = source_code_line sub  = |if_aco_proxy| case = abap_false ).
 
       IF result_class_methods <> -1.
         source_code_line = replace( val = source_code_line
@@ -391,7 +434,8 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
         EXIT.
       ENDIF.
 
-      IF add_code = abap_true.
+      "skip if_aco_proxy statement
+      IF add_code = abap_true AND result_if_aco_proxy = -1.
         APPEND source_code_line TO r_wrapper_interface_code.
       ENDIF.
 
@@ -409,6 +453,8 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
         " add a final statement before the CREATE PUBLIC statement.
         DATA(result_create_public_statement) = find( val = source_code_line sub  = |CREATE PUBLIC| case = abap_false ).
+        DATA(result_if_aco_proxy)   = find( val = source_code_line sub  = |if_aco_proxy| case = abap_false ).
+
         IF result_create_public_statement <> -1.
           APPEND 'FINAL' TO r_wrapper_class_code.
           source_code_line =   replace( val = source_code_line
@@ -424,8 +470,9 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
                                                  sub = |DESTINATION _dest_|
                                                  with = |DESTINATION space| ).
         ENDIF.
-
-        APPEND source_code_line TO r_wrapper_class_code.
+        IF result_if_aco_proxy = -1.
+          APPEND source_code_line TO r_wrapper_class_code.
+        ENDIF.
       ENDLOOP.
 
       RETURN.
@@ -442,6 +489,13 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     APPEND |INTERFACES { wrapper_interface_name }.| TO r_wrapper_class_code.
     APPEND |PROTECTED SECTION. | TO r_wrapper_class_code.
     APPEND |PRIVATE SECTION. | TO r_wrapper_class_code.
+
+    "add private methods code
+
+    LOOP AT methods_code_definition INTO DATA(method_code_line).
+      APPEND method_code_line TO r_wrapper_class_code.
+    ENDLOOP.
+    APPEND |.| TO r_wrapper_class_code.
     APPEND |ENDCLASS.| TO r_wrapper_class_code.
     APPEND | | TO r_wrapper_class_code.
 
@@ -458,12 +512,12 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
       ENDIF.
 
       "add interface name to method name
-      IF result_method_statement <> -1.
-        source_code_line = to_upper( source_code_line ).
-        source_code_line =   replace( val = source_code_line
-                                      sub = |METHOD |
-                                      with = |METHOD { wrapper_interface_name }~| ).
-      ENDIF.
+*      IF result_method_statement <> -1 .
+*        source_code_line = to_upper( source_code_line ).
+*        source_code_line =   replace( val = source_code_line
+*                                      sub = |METHOD |
+*                                      with = |METHOD { wrapper_interface_name }~| ).
+*      ENDIF.
 
       IF result_destination_statement <> -1.
         source_code_line =   replace( val = source_code_line
@@ -473,6 +527,11 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
       IF add_code = abap_true.
         APPEND source_code_line TO r_wrapper_class_code.
+        IF result_first_statement <> -1.
+          LOOP AT methods_code_implementation INTO DATA(methods_code_impl_line).
+            APPEND methods_code_impl_line TO r_wrapper_class_code.
+          ENDLOOP.
+        ENDIF.
       ENDIF.
     ENDLOOP.
 
@@ -488,9 +547,9 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
         ref->set_source( source = i_source_code ).
         ref->save( ).
         ref->unlock( ).
-      CATCH  cx_oo_access_permission  INTO DATA(access_permission_exc).
+      CATCH  cx_oo_access_permission cx_oo_class_scan_error INTO DATA(access_permission_exc).
 *    WRITE : / |error occured: { access_permission_exc->get_text(  ) }|.
-        EXIT.
+*        EXIT.
     ENDTRY.
 
 *    DATA objects TYPE STANDARD TABLE OF dwinactiv .
@@ -508,7 +567,7 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
     IF sy-subrc <> 0.
 *  WRITE : / |error occured when activating class { cls_name }. SY-SUBRC = { sy-subrc } |.
-      EXIT.
+*      EXIT.
     ENDIF.
   ENDMETHOD.
 
@@ -623,13 +682,13 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
       r_object_name = i_short_object_name && unique_hex_number_string.
 
       IF  i_object_type   = 'CLAS'.
-        IF NOT xco_abap_repository=>object->clas->for( CONV #( r_object_name ) )->exists( ).
+        IF NOT xco_abap_repository=>object->clas->for( r_object_name )->exists( ).
           is_valid_repo_object_name = abap_true.
         ELSE.
           unique_number += 1.
         ENDIF.
       ELSEIF i_object_type   = 'INTF'.
-        IF NOT xco_abap_repository=>object->intf->for( CONV #( r_object_name ) )->exists( ).
+        IF NOT xco_abap_repository=>object->intf->for( r_object_name )->exists( ).
           is_valid_repo_object_name = abap_true.
         ELSE.
           unique_number += 1.
@@ -706,6 +765,109 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ELSE.
       r_transport = ''.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD get_private_methods_code.
+    DATA add_code TYPE abap_bool.
+    DATA result_in_interface TYPE abap_bool.
+
+    DATA source_code_line LIKE LINE OF i_aco_proxy_class_src_code.
+
+*    APPEND |INTERFACE { wrapper_interface_name }| TO r_methods_definition_code.
+*    APPEND | PUBLIC . | TO r_wrapper_interface_code.
+
+    LOOP AT i_aco_proxy_class_src_code  INTO source_code_line.
+
+      DATA(result_last_statement)  = find( val = source_code_line sub  = |.| case = abap_false ).
+      DATA(result_first_statement) = find( val = source_code_line sub  = |CLASS-METHODS| case = abap_false ).
+      DATA(result_type_statement)   = find( val = source_code_line sub  = |TYPE | case = abap_false ).
+      DATA(result_endclass_statement) = find( val = source_code_line sub  = |ENDCLASS.| case = abap_false ).
+
+      DATA(result_class_methods)   = find( val = source_code_line sub  = |CLASS-METHODS| case = abap_false ).
+
+      DATA(result_destination_statement) = find( val = source_code_line sub  = |_dest_| case = abap_false ).
+
+      DATA(result_none_statement) = find( val = source_code_line sub  = |'NONE'| case = abap_false ).
+
+      " !prheader               TYPE ZIF_WRAP_TEST_4714~bapimereqheader OPTIONAL
+
+      DATA(result_exclamation_mark) = find( val = source_code_line sub  = |!| case = abap_false ).
+
+
+      IF result_class_methods <> -1.
+        source_code_line = replace( val = source_code_line
+                                    sub = |CLASS-METHODS|
+                                    with = |METHODS| ).
+        DATA(source_code_line_impl) = replace( val = source_code_line
+                                    sub = |METHODS |
+                                    with = |METHOD { wrapper_interface_name }~| ).
+        source_code_line_impl =  source_code_line_impl &&  '.'.
+*        APPEND |.| TO r_methods_implementation_code.
+        APPEND source_code_line_impl TO r_methods_implementation_code.
+        APPEND |ENDMETHOD.|     TO r_methods_implementation_code.
+      ENDIF.
+
+      IF result_endclass_statement <> -1.
+        EXIT.
+      ENDIF.
+      DATA string1 TYPE string.
+      DATA string2 TYPE string.
+      IF result_exclamation_mark <> -1.
+        SPLIT source_code_line AT '!' INTO string1 string2.
+        SPLIT string2 AT space INTO TABLE DATA(source_code_line_tab).
+        DATA(type_of) = source_code_line_tab[ 1 ].
+        REPLACE '!' IN type_of WITH ''.
+        LOOP AT wrapper_interface_code INTO DATA(interface_code_line).
+          CLEAR result_in_interface.
+          DATA(result_is_in_interface) = find( val = interface_code_line sub  = type_of case = abap_false ).
+          IF result_is_in_interface <> -1.
+            result_in_interface = abap_true.
+            EXIT.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+
+      IF result_first_statement <> -1.
+        add_code = abap_true.
+      ENDIF.
+
+      IF add_code = abap_true AND result_last_statement <> -1.
+        add_code = abap_false.
+      ENDIF.
+
+      IF result_type_statement <> -1 AND
+         result_in_interface = abap_true AND
+         result_destination_statement = -1
+         .
+        source_code_line = replace( val = source_code_line
+                                    sub = |TYPE |
+                                    with = |TYPE { wrapper_interface_name }~| ).
+      ENDIF.
+
+      IF result_destination_statement <> -1.
+        source_code_line =   replace( val = source_code_line
+                                               sub = |DESTINATION _dest_|
+                                               with = |DESTINATION space| ).
+      ENDIF.
+
+      IF result_none_statement <> -1.
+        source_code_line =   replace( val = source_code_line
+                                               sub = |DESTINATION 'NONE'|
+                                               with = |DESTINATION space| ).
+      ENDIF.
+
+      IF add_code = abap_true.
+
+        IF result_class_methods <> -1.
+          APPEND '.' TO r_methods_definition_code.
+        ENDIF.
+        APPEND source_code_line TO r_methods_definition_code.
+      ENDIF.
+
+
+
+    ENDLOOP.
+    APPEND '.' TO r_methods_definition_code.
   ENDMETHOD.
 
 ENDCLASS.

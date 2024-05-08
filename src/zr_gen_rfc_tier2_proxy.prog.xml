@@ -18,6 +18,12 @@
     </item>
     <item>
      <ID>S</ID>
+     <KEY>DEMOMODE</KEY>
+     <ENTRY>Demomode</ENTRY>
+     <LENGTH>16</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
      <KEY>NO_INTF</KEY>
      <ENTRY>Only wrapper class</ENTRY>
      <LENGTH>26</LENGTH>
@@ -27,6 +33,12 @@
      <KEY>PACKAGE</KEY>
      <ENTRY>Target Package</ENTRY>
      <LENGTH>22</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>PATCHOBJ</KEY>
+     <ENTRY>Overwrite objects</ENTRY>
+     <LENGTH>25</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -65,6 +77,12 @@
      <TEXTPOOL>
       <item>
        <ID>S</ID>
+       <KEY>DEMOMODE</KEY>
+       <ENTRY>Demomode</ENTRY>
+       <LENGTH>38</LENGTH>
+      </item>
+      <item>
+       <ID>S</ID>
        <KEY>NO_INTF</KEY>
        <ENTRY>Nur Wrapper Klasse</ENTRY>
        <LENGTH>38</LENGTH>
@@ -73,6 +91,12 @@
        <ID>S</ID>
        <KEY>PACKAGE</KEY>
        <ENTRY>Zielpaket</ENTRY>
+       <LENGTH>38</LENGTH>
+      </item>
+      <item>
+       <ID>S</ID>
+       <KEY>PATCHOBJ</KEY>
+       <ENTRY>Objekte überschreiben</ENTRY>
        <LENGTH>38</LENGTH>
       </item>
       <item>

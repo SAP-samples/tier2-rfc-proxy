@@ -7,6 +7,8 @@ TABLES sscrfields.
 DATA function_type TYPE tftit.
 DATA function_modules TYPE cl_aco_metadata_provider=>t_functions .
 
+DATA source_code_line TYPE string.
+
 SELECT-OPTIONS s_func FOR  function_type-funcname  NO INTERVALS .
 
 PARAMETERS package TYPE tadir-devclass.
@@ -17,6 +19,12 @@ PARAMETERS : yes_intf RADIOBUTTON GROUP rad1 DEFAULT 'X',
 PARAMETERS : wrapclas TYPE sxco_class_name DEFAULT 'ZCL_WRAP_TEST'.
 PARAMETERS : wrapfact TYPE sxco_class_name DEFAULT 'ZCL_FACT_TEST'.
 PARAMETERS : wrapintf TYPE sxco_class_name DEFAULT 'ZIF_WRAP_TEST'.
+
+*PARAMETERS : demomode TYPE abap_bool DEFAULT abap_true.
+DATA demomode TYPE abap_bool VALUE abap_false.
+
+"overwrite existing objects
+PARAMETERS : patchobj TYPE abap_bool DEFAULT abap_true.
 
 LOOP AT s_func INTO DATA(function_module_sel_option).
   "transaction aco_proxy only supports remote enabled function modules
@@ -45,7 +53,7 @@ TRY.
     EXIT.
 ENDTRY.
 
-DATA(exception_text) = tier2_rfc_proxy_generator->generate_wrapper_objects( ).
+DATA(exception_text) = tier2_rfc_proxy_generator->generate_wrapper_objects( demomode ).
 
 IF exception_text IS NOT INITIAL.
   WRITE : 'Exception occured generating objects:'.
@@ -67,23 +75,70 @@ ELSE.
                          ).
 ENDIF.
 
-CALL FUNCTION 'RS_WORKING_OBJECTS_ACTIVATE'
-  TABLES
-    objects                = objects
-  EXCEPTIONS
-    excecution_error       = 1
-    cancelled              = 2
-    insert_into_corr_error = 3
-    OTHERS                 = 4.
+IF demomode = abap_False.
 
-IF sy-subrc <> 0.
-  WRITE : / |error occured when activating classes. SY-SUBRC = { sy-subrc } |.
-  EXIT.
-ELSE.
-  WRITE : / |Generation finished:|.
-  IF yes_intf = abap_true.
-    WRITE : / |{ wrapclas }, { wrapfact } and { wrapintf }|.
+  CALL FUNCTION 'RS_WORKING_OBJECTS_ACTIVATE'
+    TABLES
+      objects                = objects
+    EXCEPTIONS
+      excecution_error       = 1
+      cancelled              = 2
+      insert_into_corr_error = 3
+      OTHERS                 = 4.
+
+  IF sy-subrc <> 0.
+    WRITE : / |error occured when activating classes. SY-SUBRC = { sy-subrc } |.
+    EXIT.
   ELSE.
-    WRITE : / |{ wrapclas }|.
+    WRITE : / |Generation finished:|.
+    IF yes_intf = abap_true.
+      WRITE : / |{ wrapclas }, { wrapfact } and { wrapintf }|.
+    ELSE.
+      WRITE : / |{ wrapclas }|.
+    ENDIF.
   ENDIF.
+
+ELSE.
+
+  WRITE : / '***************************'.
+  WRITE : / 'methods_code_definition'.
+  WRITE : / '***************************'.
+
+  LOOP AT tier2_rfc_proxy_generator->methods_code_definition INTO source_code_line.
+    WRITE : / source_code_line.
+  ENDLOOP.
+
+  WRITE : / '***************************'.
+  WRITE : / 'methods_code_implementation'.
+  WRITE : / '***************************'.
+
+  LOOP AT tier2_rfc_proxy_generator->methods_code_implementation INTO source_code_line.
+    WRITE : / source_code_line.
+  ENDLOOP.
+
+  WRITE : / '***************************'.
+  WRITE : / 'wrapper_factory_class_code'.
+  WRITE : / '***************************'.
+
+  LOOP AT tier2_rfc_proxy_generator->wrapper_factory_class_code INTO source_code_line.
+    WRITE : / source_code_line.
+  ENDLOOP.
+
+  WRITE : / '***************************'.
+  WRITE : / 'wrapper_class_code'.
+  WRITE : / '***************************'.
+
+  LOOP AT tier2_rfc_proxy_generator->wrapper_class_code INTO source_code_line.
+    WRITE : / source_code_line.
+  ENDLOOP.
+
+  WRITE : / '***************************'.
+  WRITE : / 'wrapper_interface_code'.
+  WRITE : / '***************************'.
+
+
+  LOOP AT tier2_rfc_proxy_generator->wrapper_interface_code INTO source_code_line.
+    WRITE : / source_code_line.
+  ENDLOOP.
+
 ENDIF.
