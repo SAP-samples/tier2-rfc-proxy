@@ -801,9 +801,15 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
         DATA(source_code_line_impl) = replace( val = source_code_line
                                     sub = |METHODS |
                                     with = |METHOD { wrapper_interface_name }~| ).
+        DATA(method_name) = replace( val = source_code_line
+                                    sub = |METHODS |
+                                    with = || ).
+        CONDENSE method_name NO-GAPS.
         source_code_line_impl =  source_code_line_impl &&  '.'.
 *        APPEND |.| TO r_methods_implementation_code.
         APPEND source_code_line_impl TO r_methods_implementation_code.
+        APPEND |  "add call to private { source_code_line }| TO r_methods_implementation_code.
+        append |  "e.g. me->{ method_name }( ... ) | TO r_methods_implementation_code.
         APPEND |ENDMETHOD.|     TO r_methods_implementation_code.
       ENDIF.
 
