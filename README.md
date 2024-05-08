@@ -41,12 +41,13 @@ The tool can be used in short as follows:
    3.2 **Intf., class and fact.class**: When you select this option the generator will generate a wrapper class, an interface and a factory class (this is recommended)
        **Only wrapper class**: When you select this option the generator will only generate a wrapper class, for those that do not want to generate 3 wrapper objects
    3.3 Here you have to specify the repository object names that shall be generated. Depending on the option you have chosen you have to specify the names of three objects or just for one class.
+   3.4 You can specify whether the objects if they already exist are being overwritten   
 
-4. Start the report and check the output.  
+5. Start the report and check the output.  
 
    <img src="images/030_result_report.png" alt="Check output of report" width="70%">    
 
-5. Check the generated objects in the target package.
+6. Check the generated objects in the target package.
 
    <img src="images/040_generated_objects.png" alt="Check generated objects" width="70%">   
 
@@ -56,107 +57,123 @@ The tool can be used in short as follows:
 ### Wrapper Interface
 
 ```ABAP
-INTERFACE ZIF_WRAP_TEST_4711
+INTERFACE zif_wrap_test_003
  PUBLIC .
-    INTERFACES if_aco_proxy .
 
-    TYPES:
-      banfn                          TYPE c LENGTH 000010 ##TYPSHADOW .
-    TYPES:
-      bsart TYPE c LENGTH 000004 ##TYPSHADOW .
-    TYPES:
-      bsakz TYPE c LENGTH 000001 ##TYPSHADOW .
-    TYPES:
-      gsfrg TYPE c LENGTH 000001 ##TYPSHADOW .
-    TYPES:
-      estkz TYPE c LENGTH 000001 ##TYPSHADOW .
-...
+  TYPES:
+    banfn                          TYPE c LENGTH 000010 ##TYPSHADOW .
+  TYPES:
+    bsart TYPE c LENGTH 000004 ##TYPSHADOW .
+  TYPES:
+    bsakz TYPE c LENGTH 000001 ##TYPSHADOW .
+  TYPES:
+    gsfrg TYPE c LENGTH 000001 ##TYPSHADOW .
+  TYPES:
+    estkz TYPE c LENGTH 000001 ##TYPSHADOW .
+
+....
+
 TYPES:
-      BEGIN OF bapimereqheader               ,
-        preq_no         TYPE banfn,
-        pr_type         TYPE bsart,
-        ctrl_ind        TYPE bsakz,
-        general_release TYPE gsfrg,
-        create_ind      TYPE estkz,
-        item_intvl      TYPE pincr,
-        last_item       TYPE lponr,
-        auto_source     TYPE kzzuo,
-        memory          TYPE membf,
-        hold_complete   TYPE bapimereqpostflag,
-        hold_uncomplete TYPE bapimereqpostflag,
-        park_complete   TYPE bapimereqpostflag,
-        park_uncomplete TYPE bapimereqpostflag,
-        memorytype      TYPE memorytype,
-      END OF bapimereqheader                ##TYPSHADOW .
+    BEGIN OF bapimereqheader               ,
+      preq_no         TYPE banfn,
+      pr_type         TYPE bsart,
+      ctrl_ind        TYPE bsakz,
+      general_release TYPE gsfrg,
+      create_ind      TYPE estkz,
+      item_intvl      TYPE pincr,
+      last_item       TYPE lponr,
+      auto_source     TYPE kzzuo,
+      memory          TYPE membf,
+      hold_complete   TYPE bapimereqpostflag,
+      hold_uncomplete TYPE bapimereqpostflag,
+      park_complete   TYPE bapimereqpostflag,
+      park_uncomplete TYPE bapimereqpostflag,
+      memorytype      TYPE memorytype,
+    END OF bapimereqheader                ##TYPSHADOW .
+  TYPES:
+    BEGIN OF bapimereqheaderx              ,
+      preq_no         TYPE bapiupdate,
+
 ...
+
  METHODS bapi_pr_create
-      IMPORTING
-        !prheader               TYPE bapimereqheader OPTIONAL
-        !prheaderx              TYPE bapimereqheaderx OPTIONAL
-        !testrun                TYPE char1 OPTIONAL
-        !_dest_                 TYPE rfcdest DEFAULT 'NONE'
-      EXPORTING
-        !number                 TYPE banfn
-        !prheaderexp            TYPE bapimereqheader
-      CHANGING
-        !allversions            TYPE _bapimedcm_allversions OPTIONAL
-        !extensionin            TYPE _bapiparex OPTIONAL
-        !extensionout           TYPE _bapiparex OPTIONAL
-        !praccount              TYPE _bapimereqaccount OPTIONAL
-        !praccountproitsegment  TYPE _bapimereqaccountprofitseg OPTIONAL
-        !praccountx             TYPE _bapimereqaccountx OPTIONAL
-        !praddrdelivery         TYPE _bapimerqaddrdelivery OPTIONAL
-        !prcomponents           TYPE _bapimereqcomponent OPTIONAL
-        !prcomponentsx          TYPE _bapimereqcomponentx OPTIONAL
-        !prheadertext           TYPE _bapimereqheadtext OPTIONAL
-        !pritem                 TYPE _bapimereqitemimp
-        !pritemexp              TYPE _bapimereqitem OPTIONAL
-        !pritemsource           TYPE _bapimereqsource OPTIONAL
-        !pritemtext             TYPE _bapimereqitemtext OPTIONAL
-        !pritemx                TYPE _bapimereqitemx OPTIONAL
-        !prversion              TYPE _bapimereqdcm OPTIONAL
-        !prversionx             TYPE _bapimereqdcmx OPTIONAL
-        !return                 TYPE _bapiret2 OPTIONAL
-        !serialnumber           TYPE _bapimereqserialno OPTIONAL
-        !serialnumberx          TYPE _bapimereqserialnox OPTIONAL
-        !serviceaccount         TYPE _bapi_srv_acc_data OPTIONAL
-        !serviceaccountx        TYPE _bapi_srv_acc_datax OPTIONAL
-        !servicecontractlimits  TYPE _bapi_srv_contract_limits OPTIONAL
-        !servicecontractlimitsx TYPE _bapi_srv_contract_limitsx OPTIONAL
-        !servicelimit           TYPE _bapi_srv_limit_data OPTIONAL
-        !servicelimitx          TYPE _bapi_srv_limit_datax OPTIONAL
-        !servicelines           TYPE _bapi_srv_service_line OPTIONAL
-        !servicelinesx          TYPE _bapi_srv_service_linex OPTIONAL
-        !servicelongtexts       TYPE _bapi_srv_longtexts OPTIONAL
-        !serviceoutline         TYPE _bapi_srv_outline OPTIONAL
-        !serviceoutlinex        TYPE _bapi_srv_outlinex OPTIONAL
-      RAISING
-        cx_aco_application_exception
-        cx_aco_communication_failure
-        cx_aco_system_failure .
+    IMPORTING
+      !prheader               TYPE bapimereqheader OPTIONAL
+      !prheaderx              TYPE bapimereqheaderx OPTIONAL
+      !testrun                TYPE char1 OPTIONAL
+      !_dest_                 TYPE rfcdest DEFAULT 'NONE'
+    EXPORTING
+      !number                 TYPE banfn
+      !prheaderexp            TYPE bapimereqheader
+    CHANGING
+      !allversions            TYPE _bapimedcm_allversions OPTIONAL
+      !extensionin            TYPE _bapiparex OPTIONAL
+      !extensionout           TYPE _bapiparex OPTIONAL
+      !praccount              TYPE _bapimereqaccount OPTIONAL
+      !praccountproitsegment  TYPE _bapimereqaccountprofitseg OPTIONAL
+      !praccountx             TYPE _bapimereqaccountx OPTIONAL
+      !praddrdelivery         TYPE _bapimerqaddrdelivery OPTIONAL
+      !prcomponents           TYPE _bapimereqcomponent OPTIONAL
+      !prcomponentsx          TYPE _bapimereqcomponentx OPTIONAL
+      !prheadertext           TYPE _bapimereqheadtext OPTIONAL
+      !pritem                 TYPE _bapimereqitemimp
+      !pritemexp              TYPE _bapimereqitem OPTIONAL
+      !pritemsource           TYPE _bapimereqsource OPTIONAL
+      !pritemtext             TYPE _bapimereqitemtext OPTIONAL
+      !pritemx                TYPE _bapimereqitemx OPTIONAL
+      !prversion              TYPE _bapimereqdcm OPTIONAL
+      !prversionx             TYPE _bapimereqdcmx OPTIONAL
+      !return                 TYPE _bapiret2 OPTIONAL
+      !serialnumber           TYPE _bapimereqserialno OPTIONAL
+      !serialnumberx          TYPE _bapimereqserialnox OPTIONAL
+      !serviceaccount         TYPE _bapi_srv_acc_data OPTIONAL
+      !serviceaccountx        TYPE _bapi_srv_acc_datax OPTIONAL
+      !servicecontractlimits  TYPE _bapi_srv_contract_limits OPTIONAL
+      !servicecontractlimitsx TYPE _bapi_srv_contract_limitsx OPTIONAL
+      !servicelimit           TYPE _bapi_srv_limit_data OPTIONAL
+      !servicelimitx          TYPE _bapi_srv_limit_datax OPTIONAL
+      !servicelines           TYPE _bapi_srv_service_line OPTIONAL
+      !servicelinesx          TYPE _bapi_srv_service_linex OPTIONAL
+      !servicelongtexts       TYPE _bapi_srv_longtexts OPTIONAL
+      !serviceoutline         TYPE _bapi_srv_outline OPTIONAL
+      !serviceoutlinex        TYPE _bapi_srv_outlinex OPTIONAL
+    RAISING
+      cx_aco_application_exception
+      cx_aco_communication_failure
+      cx_aco_system_failure .
 ENDINTERFACE.
+
 ```
 
 ### Wrapper Class
 
 ```ABAP
-CLASS zcl_wrap_test_4711 DEFINITION
+CLASS zcl_wrap_test_003 DEFINITION
 PUBLIC
 FINAL
 CREATE PUBLIC .
   PUBLIC SECTION.
-    INTERFACES zif_wrap_test_4711.
+    INTERFACES zif_wrap_test_003.
   PROTECTED SECTION.
   PRIVATE SECTION.
-ENDCLASS.
-
-
-
-CLASS zcl_wrap_test_4711 IMPLEMENTATION.
+    
+ METHODS bapi_pr_create
+      IMPORTING
+        !prheader               TYPE zif_wrap_test_003~bapimereqheader OPTIONAL
+        !prheaderx              TYPE zif_wrap_test_003~bapimereqheaderx OPTIONAL
+        !testrun                TYPE zif_wrap_test_003~char1 OPTIONAL
+        !_dest_                 TYPE rfcdest DEFAULT 'NONE'
+      EXPORTING
+        !number                 TYPE zif_wrap_test_003~banfn
+        !prheaderexp            TYPE zif_wrap_test_003~bapimereqheader
 
 ...
 
-  METHOD zif_wrap_test_4711~bapi_pr_create.
+...
+
+CLASS zcl_wrap_test_003 IMPLEMENTATION.
+
+  METHOD bapi_pr_create.
     DATA: _rfc_message_ TYPE aco_proxy_msg_type.
     CALL FUNCTION 'BAPI_PR_CREATE' DESTINATION space
       EXPORTING
@@ -171,32 +188,7 @@ CLASS zcl_wrap_test_4711 IMPLEMENTATION.
         extensionin            = extensionin
         extensionout           = extensionout
         praccount              = praccount
-        praccountproitsegment  = praccountproitsegment
-        praccountx             = praccountx
-        praddrdelivery         = praddrdelivery
-        prcomponents           = prcomponents
-        prcomponentsx          = prcomponentsx
-        prheadertext           = prheadertext
-        pritem                 = pritem
-        pritemexp              = pritemexp
-        pritemsource           = pritemsource
-        pritemtext             = pritemtext
-        pritemx                = pritemx
-        prversion              = prversion
-        prversionx             = prversionx
-        return                 = return
-        serialnumber           = serialnumber
-        serialnumberx          = serialnumberx
-        serviceaccount         = serviceaccount
-        serviceaccountx        = serviceaccountx
-        servicecontractlimits  = servicecontractlimits
-        servicecontractlimitsx = servicecontractlimitsx
-        servicelimit           = servicelimit
-        servicelimitx          = servicelimitx
-        servicelines           = servicelines
-        servicelinesx          = servicelinesx
-        servicelongtexts       = servicelongtexts
-        serviceoutline         = serviceoutline
+...
         serviceoutlinex        = serviceoutlinex
       EXCEPTIONS
         communication_failure  = 1 MESSAGE _rfc_message_
@@ -230,6 +222,12 @@ CLASS zcl_wrap_test_4711 IMPLEMENTATION.
     ENDIF.
 
   ENDMETHOD.
+
+
+  METHOD zif_wrap_test_003~bapi_pr_create.
+    "add call to private method bapi_pr_create
+    "e.g. me->bapi_pr_create( ... )
+  ENDMETHOD.
 ENDCLASS.
 
 ```
@@ -237,26 +235,27 @@ ENDCLASS.
 ### Factory Class
 
 ```ABAP
-CLASS ZCL_FACT_TEST_4711 DEFINITION
+CLASS zcl_fact_test_003 DEFINITION
 PUBLIC
 FINAL
 CREATE PRIVATE .
-   PUBLIC SECTION.
-     CLASS-METHODS create_instance
-       RETURNING VALUE(result) TYPE REF TO ZIF_WRAP_TEST_4711.
-   PROTECTED SECTION.
-   PRIVATE SECTION.
-     METHODS constructor.
+  PUBLIC SECTION.
+    CLASS-METHODS create_instance
+      RETURNING VALUE(result) TYPE REF TO zif_wrap_test_003.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+    METHODS constructor.
 ENDCLASS.
 
-CLASS ZCL_FACT_TEST_4711 IMPLEMENTATION.
+CLASS zcl_fact_test_003 IMPLEMENTATION.
   METHOD constructor.
   ENDMETHOD.
   METHOD create_instance.
-   result = NEW ZCL_WRAP_TEST_4711(  ).
+    result = NEW zcl_wrap_test_003(  ).
   ENDMETHOD.
 ENDCLASS.
 ```
+
 
 ## Background
 
