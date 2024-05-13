@@ -10,6 +10,10 @@ It basically uses the same API used by transaction ACO_PROXY. It takes the code 
 
 The transaction ACO_PROXY and its underlying API now also check if a data element that is used by a non released function module itself has been released. If this is the case, no shadow type will be generated.
 
+## Blog Post in SAP Community
+
+[Blog Post: How to generate a wrapper for function modules (BAPIs) in tier 2](https://community.sap.com/t5/technology-blogs-by-sap/how-to-generate-a-wrapper-for-function-modules-bapis-in-tier-2/ba-p/13692790)   
+
 ## Requirements
 
 - You have to have a system based on SAP S/4HANA 2022 on premise.
