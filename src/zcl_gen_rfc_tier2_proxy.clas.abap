@@ -115,8 +115,22 @@ ENDCLASS.
 
 
 
-CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
+CLASS ZCL_GEN_RFC_TIER2_PROXY IMPLEMENTATION.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->CONSTRUCTOR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_PACKAGE_NAME                 TYPE        SXCO_PACKAGE
+* | [--->] I_TRANSPORT_REQUEST            TYPE        SXCO_TRANSPORT(optional)
+* | [--->] I_GENERATE_INTF_AND_FACT_CLASS TYPE        ABAP_BOOL (default =ABAP_TRUE)
+* | [--->] I_WRAPPER_CLASS_NAME           TYPE        SXCO_CLASS_NAME
+* | [--->] I_WRAPPER_INTERFACE_NAME       TYPE        SXCO_CLASS_NAME(optional)
+* | [--->] I_WRAPPER_FACTORY_CLASS_NAME   TYPE        SXCO_CLASS_NAME(optional)
+* | [--->] I_FUNCTION_MODULES             TYPE        CL_ACO_METADATA_PROVIDER=>T_FUNCTIONS
+* | [--->] I_OVERWRITE_OBJECTS            TYPE        ABAP_BOOL (default =ABAP_TRUE)
+* | [!CX!] CX_ABAP_INVALID_VALUE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD constructor.
 
     IF NOT xco_abap_repository=>object->devc->for(  i_package_name  )->exists( ).
@@ -175,6 +189,13 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GENERATE_WRAPPER_OBJECTS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_DEMO_MODE                    TYPE        ABAP_BOOL (default =ABAP_FALSE)
+* | [<-()] R_EXCEPTION_TEXT               TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD generate_wrapper_objects.
     TRY.
         generate_aco_proxy_class(
@@ -290,6 +311,12 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->IF_OO_ADT_CLASSRUN~MAIN
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] OUT                            TYPE REF TO IF_OO_ADT_CLASSRUN_OUT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_oo_adt_classrun~main.
 
     package_name     = 'TEST_AF_GENERATED_OBJECTS_001'.
@@ -331,6 +358,17 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GENERATE_ACO_PROXY_CLASS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_FUNCTION_MODULES             TYPE        CL_ACO_METADATA_PROVIDER=>T_FUNCTIONS
+* | [--->] I_PROXY_CLASS_NAME             TYPE        SXCO_CLASS_NAME
+* | [--->] I_PACKAGE_NAME                 TYPE        SXCO_PACKAGE
+* | [--->] I_TRANSPORT_REQUEST            TYPE        SXCO_TRANSPORT
+* | [<-()] SUCCESS                        TYPE        ABAP_BOOL
+* | [!CX!] CX_ACO_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD generate_aco_proxy_class.
 
     cl_aco_static_proxy=>create_static_proxy_by_rfc(
@@ -350,6 +388,12 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->READ_ACO_PROXY_CLS_SRC_CODE
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] ACO_PROXY_CLASS_SRC_CODE       TYPE        RSWSOURCET
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD read_aco_proxy_cls_src_code.
 
     FIELD-SYMBOLS <source_code_line> TYPE string.
@@ -370,6 +414,12 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GET_WRAPPER_FACTORY_CLASS_CODE
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] R_WRAPPER__FACTORY_CLASS_CODE  TYPE        RSWSOURCET
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_wrapper_factory_class_code.
 
 
@@ -403,6 +453,13 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GET_WRAPPER_INTERFACE_CODE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACO_PROXY_CLASS_SRC_CODE     TYPE        RSWSOURCET
+* | [<-()] R_WRAPPER_INTERFACE_CODE       TYPE        RSWSOURCET
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_wrapper_interface_code.
 
     DATA add_code TYPE abap_bool.
@@ -442,6 +499,13 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GET_WRAPPER_CLASS_CODE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACO_PROXY_CLASS_SRC_CODE     TYPE        RSWSOURCET
+* | [<-()] R_WRAPPER_CLASS_CODE           TYPE        RSWSOURCET
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_wrapper_class_code.
 
     DATA add_code TYPE abap_bool.
@@ -538,6 +602,14 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->UPDATE_WRAPPER_OBJECTS_CODE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_OBJECT_TYPE                  TYPE        TROBJTYPE
+* | [--->] I_OBJECT_NAME                  TYPE        TROBJ_NAME
+* | [--->] I_SOURCE_CODE                  TYPE        RSWSOURCET
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD update_wrapper_objects_code.
 
     DATA(ref) = cl_oo_factory=>create_instance( )->create_clif_source( to_upper(  i_object_name  ) ).
@@ -572,7 +644,10 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
   ENDMETHOD.
 
 
-
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GENERATE_WRAPPER_INTERFACE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD generate_wrapper_interface.
 
     DATA  lo_put_operation TYPE REF TO if_xco_gen_intf_o_put  .
@@ -594,6 +669,11 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GENERATE_FACTORY_CLASS
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD generate_factory_class.
 
     DATA  lo_put_operation TYPE REF TO if_xco_gen_clas_o_put  .
@@ -614,6 +694,13 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     lo_put_operation->execute(  ).
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GET_NAMESPACE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_PACKAGE_NAME                 TYPE        STRING
+* | [<-()] R_NAMESPACE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_namespace.
 
     IF i_package_name = '$TMP'.
@@ -657,6 +744,14 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GET_UNIQUE_OBJECT_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SHORT_OBJECT_NAME            TYPE        SXCO_CLASS_NAME
+* | [--->] I_OBJECT_TYPE                  TYPE        TROBJTYPE
+* | [<-()] R_OBJECT_NAME                  TYPE        SXCO_CLASS_NAME
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_unique_object_name.
 
     DATA is_valid_repo_object_name TYPE abap_bool VALUE abap_false.
@@ -702,8 +797,11 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
   ENDMETHOD.
 
 
-
-
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->RELEASE_CLASS_AND_INTERFACE
+* +-------------------------------------------------------------------------------------------------+
+* | [!CX!] CX_ABAP_API_STATE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD release_class_and_interface.
 
     IF generate_intf_and_fact_class = abap_true.
@@ -755,6 +853,12 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->CREATE_TRANSPORT
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] R_TRANSPORT                    TYPE        SXCO_TRANSPORT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD create_transport.
     DATA(xco_package) = xco_abap_repository=>object->devc->for(  package_name  ).
     DATA(record_object_changes) = xco_package->read( )-property-record_object_changes.
@@ -767,6 +871,14 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_GEN_RFC_TIER2_PROXY->GET_PRIVATE_METHODS_CODE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACO_PROXY_CLASS_SRC_CODE     TYPE        RSWSOURCET
+* | [<---] R_METHODS_DEFINITION_CODE      TYPE        RSWSOURCET
+* | [<---] R_METHODS_IMPLEMENTATION_CODE  TYPE        RSWSOURCET
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_private_methods_code.
     DATA add_code TYPE abap_bool.
     DATA result_in_interface TYPE abap_bool.
@@ -809,7 +921,7 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 *        APPEND |.| TO r_methods_implementation_code.
         APPEND source_code_line_impl TO r_methods_implementation_code.
         APPEND |  "add call to private method { method_name }| TO r_methods_implementation_code.
-        append |  "e.g. me->{ method_name }( ... ) | TO r_methods_implementation_code.
+        APPEND |  "e.g. me->{ method_name }( ... ) | TO r_methods_implementation_code.
         APPEND |ENDMETHOD.|     TO r_methods_implementation_code.
       ENDIF.
 
@@ -821,13 +933,31 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
       IF result_exclamation_mark <> -1.
         SPLIT source_code_line AT '!' INTO string1 string2.
         SPLIT string2 AT space INTO TABLE DATA(source_code_line_tab).
-        DATA(type_of) = source_code_line_tab[ 1 ].
+        DATA(number_of_table_entries) = lines( source_code_line_tab ).
+        DATA(type_of) = source_code_line_tab[ number_of_table_entries ].
+
+
         REPLACE '!' IN type_of WITH ''.
         LOOP AT wrapper_interface_code INTO DATA(interface_code_line).
           CLEAR result_in_interface.
           DATA(result_is_in_interface) = find( val = interface_code_line sub  = type_of case = abap_false ).
           IF result_is_in_interface <> -1.
             result_in_interface = abap_true.
+            DATA(ro_dtel) = xco_abap_repository=>object->dtel->for( CONV #( type_of ) ).
+            IF ro_dtel->exists( ) = abap_true.
+              ro_dtel->get_api_state( RECEIVING ro_api_state = DATA(api_state_dtel) ).
+              IF api_state_dtel->get_release_state( )->value = 'RELEASED'.
+                result_in_interface = abap_false.
+              ENDIF.
+            ENDIF.
+            DATA(ro_struc) = xco_abap_repository=>object->tabl->structure->for( CONV #( type_of ) ).
+            IF ro_struc->exists( ) = abap_true.
+              ro_struc->get_api_state( RECEIVING ro_api_state = DATA(api_state_struc) ).
+              IF api_state_struc->get_release_state( )->value = 'RELEASED'.
+                result_in_interface = abap_false.
+              ENDIF.
+            ENDIF.
+
             EXIT.
           ENDIF.
         ENDLOOP.
@@ -875,5 +1005,4 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ENDLOOP.
     APPEND '.' TO r_methods_definition_code.
   ENDMETHOD.
-
 ENDCLASS.
