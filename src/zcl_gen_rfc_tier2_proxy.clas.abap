@@ -810,6 +810,7 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
         APPEND source_code_line_impl TO r_methods_implementation_code.
         APPEND |  "add call to private method { method_name }| TO r_methods_implementation_code.
         APPEND |  "e.g. me->{ method_name }( ... ) | TO r_methods_implementation_code.
+        APPEND |RAISE EXCEPTION TYPE cx_method_not_implemented.| TO r_methods_implementation_code.
         APPEND |ENDMETHOD.|     TO r_methods_implementation_code.
       ENDIF.
 
