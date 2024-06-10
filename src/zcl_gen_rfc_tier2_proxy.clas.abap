@@ -117,7 +117,6 @@ ENDCLASS.
 
 CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
-
   METHOD constructor.
 
     IF NOT xco_abap_repository=>object->devc->for(  i_package_name  )->exists( ).
@@ -137,19 +136,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     generate_intf_and_fact_class = i_generate_intf_and_fact_class.
 
     overwrite_objects = i_overwrite_objects.
-
-    IF xco_abap_repository=>object->devc->for( package_name )->exists(  ) = abap_false.
-      RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | Package { i_package_name } does not exist |.
-    ELSE.
-      DATA(package_type) = xco_abap_repository=>object->devc->for( package_name )->read(  )-property-package_type->value.
-      "' '  Development Package
-      "'X'  Main Package
-      "'S'  Structure Package
-
-      IF package_type = 'X' OR package_type = 'S'.
-        RAISE EXCEPTION TYPE cx_abap_invalid_value EXPORTING value = | { i_package_name } is not a Development package|.
-      ENDIF.
-    ENDIF.
 
     IF i_overwrite_objects = abap_false.
       IF i_generate_intf_and_fact_class = abap_true.
@@ -188,7 +174,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
-
 
   METHOD generate_wrapper_objects.
     TRY.
@@ -305,7 +290,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD if_oo_adt_classrun~main.
 
     package_name     = 'TEST_AF_GENERATED_OBJECTS_001'.
@@ -347,7 +331,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD generate_aco_proxy_class.
 
     cl_aco_static_proxy=>create_static_proxy_by_rfc(
@@ -366,7 +349,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     success = abap_true.
 
   ENDMETHOD.
-
 
   METHOD read_aco_proxy_cls_src_code.
 
@@ -387,7 +369,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ref_proxy_class_name->get_source( IMPORTING source = aco_proxy_class_src_code ).
 
   ENDMETHOD.
-
 
   METHOD get_wrapper_factory_class_code.
 
@@ -421,7 +402,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
 
   ENDMETHOD.
-
 
   METHOD get_wrapper_interface_code.
 
@@ -461,7 +441,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
     ENDLOOP.
   ENDMETHOD.
-
 
   METHOD get_wrapper_class_code.
 
@@ -559,7 +538,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD update_wrapper_objects_code.
 
     DATA(ref) = cl_oo_factory=>create_instance( )->create_clif_source( to_upper(  i_object_name  ) ).
@@ -594,6 +572,7 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
   ENDMETHOD.
 
 
+
   METHOD generate_wrapper_interface.
 
     DATA  lo_put_operation TYPE REF TO if_xco_gen_intf_o_put  .
@@ -615,7 +594,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD generate_factory_class.
 
     DATA  lo_put_operation TYPE REF TO if_xco_gen_clas_o_put  .
@@ -635,7 +613,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
     lo_put_operation->execute(  ).
   ENDMETHOD.
-
 
   METHOD get_namespace.
 
@@ -680,7 +657,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD get_unique_object_name.
 
     DATA is_valid_repo_object_name TYPE abap_bool VALUE abap_false.
@@ -724,6 +700,8 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ENDWHILE.
 
   ENDMETHOD.
+
+
 
 
   METHOD release_class_and_interface.
@@ -777,7 +755,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD create_transport.
     DATA(xco_package) = xco_abap_repository=>object->devc->for(  package_name  ).
     DATA(record_object_changes) = xco_package->read( )-property-record_object_changes.
@@ -789,7 +766,6 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
       r_transport = ''.
     ENDIF.
   ENDMETHOD.
-
 
   METHOD get_private_methods_code.
     DATA add_code TYPE abap_bool.
@@ -842,34 +818,34 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
       ENDIF.
       DATA string1 TYPE string.
       DATA string2 TYPE string.
+      DATA pos TYPE i.
+      CLEAR pos.
       IF result_exclamation_mark <> -1.
+
         SPLIT source_code_line AT '!' INTO string1 string2.
         SPLIT string2 AT space INTO TABLE DATA(source_code_line_tab).
-        DATA(number_of_table_entries) = lines( source_code_line_tab ).
-        DATA(type_of) = source_code_line_tab[ number_of_table_entries ].
 
+        LOOP AT source_code_line_tab INTO DATA(single_statement).
+          pos += 1.
+          IF single_statement = 'TYPE'.
+            DATA(pos_type) = pos.
+          ENDIF.
+        ENDLOOP.
 
-        REPLACE '!' IN type_of WITH ''.
+        DATA(type_of) = source_code_line_tab[ pos_type + 1 ].
+
+        "REPLACE '!' IN type_of WITH ''.
+
         LOOP AT wrapper_interface_code INTO DATA(interface_code_line).
           CLEAR result_in_interface.
           DATA(result_is_in_interface) = find( val = interface_code_line sub  = type_of case = abap_false ).
+          DATA(first_methods_statement) = find( val = interface_code_line sub  = 'METHODS' case = abap_false ).
+          "only search in types statements
+          IF first_methods_statement <> -1.
+            EXIT.
+          ENDIF.
           IF result_is_in_interface <> -1.
             result_in_interface = abap_true.
-            DATA(ro_dtel) = xco_abap_repository=>object->dtel->for( CONV #( type_of ) ).
-            IF ro_dtel->exists( ) = abap_true.
-              ro_dtel->get_api_state( RECEIVING ro_api_state = DATA(api_state_dtel) ).
-              IF api_state_dtel->get_release_state( )->value = 'RELEASED'.
-                result_in_interface = abap_false.
-              ENDIF.
-            ENDIF.
-            DATA(ro_struc) = xco_abap_repository=>object->tabl->structure->for( CONV #( type_of ) ).
-            IF ro_struc->exists( ) = abap_true.
-              ro_struc->get_api_state( RECEIVING ro_api_state = DATA(api_state_struc) ).
-              IF api_state_struc->get_release_state( )->value = 'RELEASED'.
-                result_in_interface = abap_false.
-              ENDIF.
-            ENDIF.
-
             EXIT.
           ENDIF.
         ENDLOOP.
@@ -887,9 +863,24 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
          result_in_interface = abap_true AND
          result_destination_statement = -1
          .
-        source_code_line = replace( val = source_code_line
-                                    sub = |TYPE |
-                                    with = |TYPE { wrapper_interface_name }~| ).
+
+        "certain function modules such as SATC_CI_GET_RESULT use
+        "built in types such as 'I'
+        "searching for 'I' by name is not reliable
+
+        CASE to_upper( type_of ).
+            "built in numeric types
+          WHEN 'I' OR 'B' OR 'S' OR 'INT8' OR 'P' OR 'F'.
+            "built in character type
+          WHEN 'C' OR 'N'  OR 'STRING'.
+            "built in date type
+          WHEN 'D' OR 'T'.
+            "not a built in type
+          WHEN OTHERS.
+            source_code_line = replace( val = source_code_line
+                                        sub = |TYPE |
+                                        with = |TYPE { wrapper_interface_name }~| ).
+        ENDCASE.
       ENDIF.
 
       IF result_destination_statement <> -1.
@@ -917,4 +908,5 @@ CLASS zcl_gen_rfc_tier2_proxy IMPLEMENTATION.
     ENDLOOP.
     APPEND '.' TO r_methods_definition_code.
   ENDMETHOD.
+
 ENDCLASS.
