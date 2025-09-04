@@ -1,6 +1,6 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/tier2-rfc-proxy)](https://api.reuse.software/info/github.com/SAP-samples/tier2-rfc-proxy)
 
-# Tier2 RFC proxy generator
+# Generator for custom wrappers for RFC function modules
 
 ## Description
 
@@ -12,7 +12,7 @@ The transaction ACO_PROXY and its underlying API now also check if a data elemen
 
 ## Blog Post in SAP Community
 
-[Blog Post: How to generate a wrapper for function modules (BAPIs) in tier 2](https://community.sap.com/t5/technology-blogs-by-sap/how-to-generate-a-wrapper-for-function-modules-bapis-in-tier-2/ba-p/13692790)   
+[Blog Post: How to generate a wrapper for function modules (BAPIs) for missing released SAP APIs](https://community.sap.com/t5/technology-blog-posts-by-sap/how-to-generate-a-wrapper-for-function-modules-bapis-for-missing-released/ba-p/13692790)   
 
 ## Requirements
 
